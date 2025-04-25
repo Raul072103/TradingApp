@@ -1,6 +1,12 @@
 package event
 
+type Trade struct {
+	ID         int64
+	AccountIDs []int64
+}
+
 type TradeExecuted struct {
+	Trade Trade
 }
 
 func (e *TradeExecuted) Type() string {
@@ -8,9 +14,9 @@ func (e *TradeExecuted) Type() string {
 }
 
 func (e *TradeExecuted) ID() int64 {
-	return 0
+	return e.Trade.ID
 }
 
-func (e *TradeExecuted) AccountID() int64 {
-	return 0
+func (e *TradeExecuted) AccountIDs() []int64 {
+	return e.Trade.AccountIDs
 }

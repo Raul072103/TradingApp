@@ -9,7 +9,7 @@ const (
 )
 
 type Event interface {
-	GetType() string
-	GetID() int64
-	GetAccountID() int64
+	Type() string
+	ID() int64
+	AccountIDs() []int64
 }

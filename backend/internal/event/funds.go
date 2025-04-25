@@ -1,9 +1,17 @@
 package event
 
+type Funds struct {
+	ID        int64
+	AccountID int64
+	Sum       float64
+}
+
 type FundsDebited struct {
+	Funds Funds
 }
 
 type FundsCredited struct {
+	Funds Funds
 }
 
 func (e *FundsDebited) Type() string {
@@ -11,11 +19,15 @@ func (e *FundsDebited) Type() string {
 }
 
 func (e *FundsDebited) ID() int64 {
-	return 0
+	return e.Funds.ID
 }
 
-func (e *FundsDebited) AccountID() int64 {
-	return 0
+func (e *FundsDebited) AccountIDs() []int64 {
+	return []int64{e.Funds.AccountID}
+}
+
+func (e *FundsDebited) Sum() float64 {
+	return e.Funds.Sum
 }
 
 func (e *FundsCredited) Type() string {
@@ -23,9 +35,13 @@ func (e *FundsCredited) Type() string {
 }
 
 func (e *FundsCredited) ID() int64 {
-	return 0
+	return e.Funds.ID
 }
 
-func (e *FundsCredited) AccountID() int64 {
-	return 0
+func (e *FundsCredited) AccountIDs() []int64 {
+	return []int64{e.Funds.AccountID}
+}
+
+func (e *FundsCredited) Sum() float64 {
+	return e.Funds.Sum
 }

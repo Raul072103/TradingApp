@@ -26,33 +26,33 @@ func NewOrder(orderType string) (Order, error) {
 }
 
 type OrderPlaced struct {
-	order Order
+	Order Order
 }
 
 type OrderCanceled struct {
-	order Order
+	Order Order
 }
 
 func (e *OrderPlaced) Type() string {
-	return e.order.Type
+	return OrdersPlacedEvent
 }
 
 func (e *OrderPlaced) ID() int64 {
-	return e.order.ID
+	return e.Order.ID
 }
 
-func (e *OrderPlaced) AccountID() int64 {
-	return e.order.AccountID
+func (e *OrderPlaced) AccountIDs() []int64 {
+	return []int64{e.Order.AccountID}
 }
 
 func (e *OrderCanceled) Type() string {
-	return e.order.Type
+	return OrdersCanceledEvent
 }
 
 func (e *OrderCanceled) ID() int64 {
-	return e.order.ID
+	return e.Order.ID
 }
 
-func (e *OrderCanceled) AccountID() int64 {
-	return e.order.AccountID
+func (e *OrderCanceled) AccountIDs() []int64 {
+	return []int64{e.Order.AccountID}
 }
