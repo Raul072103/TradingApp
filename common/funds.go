@@ -16,7 +16,7 @@ type FundsCredited struct {
 	Trade Trade
 }
 
-func (e *FundsDebited) Type() string {
+func (e *FundsDebited) Type() int {
 	return FundsDebitedEvent
 }
 
@@ -32,7 +32,7 @@ func (e *FundsDebited) Sum() float64 {
 	return e.Funds.Sum
 }
 
-func (e *FundsCredited) Type() string {
+func (e *FundsCredited) Type() int {
 	return FundsCreditedEvent
 }
 

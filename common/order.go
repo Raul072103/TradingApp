@@ -33,7 +33,7 @@ type OrderCanceled struct {
 	Order Order
 }
 
-func (e *OrderPlaced) Type() string {
+func (e *OrderPlaced) Type() int {
 	return OrdersPlacedEvent
 }
 
@@ -45,7 +45,7 @@ func (e *OrderPlaced) AccountIDs() []int64 {
 	return []int64{e.Order.AccountID}
 }
 
-func (e *OrderCanceled) Type() string {
+func (e *OrderCanceled) Type() int {
 	return OrdersCanceledEvent
 }
 

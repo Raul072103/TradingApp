@@ -1,15 +1,15 @@
 package common
 
 const (
-	OrdersCanceledEvent = "ORDERS_CANCELED_EVENT"
-	OrdersPlacedEvent   = "ORDERS_PLACED_EVENT"
-	FundsCreditedEvent  = "FUNDS_CREDITED_EVENT"
-	FundsDebitedEvent   = "FUNDS_DEBITED_EVENT"
-	TradeExecutedEvent  = "TRADE_EXECUTED_EVENT"
+	OrdersCanceledEvent = 0
+	OrdersPlacedEvent   = 1
+	FundsCreditedEvent  = 2
+	FundsDebitedEvent   = 3
+	TradeExecutedEvent  = 4
 )
 
 type Event interface {
-	Type() string
+	Type() int
 	ID() int64
 	AccountIDs() []int64
 }
