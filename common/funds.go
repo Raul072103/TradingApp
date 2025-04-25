@@ -1,4 +1,4 @@
-package event
+package common
 
 type Funds struct {
 	ID        int64

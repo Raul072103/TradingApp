@@ -1,4 +1,4 @@
-package event
+package common
 
 const (
 	OrdersCanceledEvent = "ORDERS_CANCELED_EVENT"

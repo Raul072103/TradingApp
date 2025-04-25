@@ -1,4 +1,4 @@
-package event
+package common
 
 type Trade struct {
 	ID         int64
