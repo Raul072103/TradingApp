@@ -8,10 +8,12 @@ type Funds struct {
 
 type FundsDebited struct {
 	Funds Funds
+	Trade Trade
 }
 
 type FundsCredited struct {
 	Funds Funds
+	Trade Trade
 }
 
 func (e *FundsDebited) Type() string {

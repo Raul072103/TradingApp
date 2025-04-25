@@ -3,6 +3,7 @@ package common
 type Trade struct {
 	ID         int64
 	AccountIDs []int64
+	Orders     []Order
 }
 
 type TradeExecuted struct {
