@@ -3,10 +3,9 @@ package store
 import (
 	"TradingSimulation/common"
 	"bufio"
+	"encoding/json"
 	"errors"
 	"os"
-	"strconv"
-	"strings"
 )
 
 var (
@@ -34,26 +33,45 @@ func (s *Store) Close() error {
 	return err
 }
 
-func (s *Store) AppendEvent(event common.Event) {
+// AppendEvent appends an event to the log file of the vent store.
+func (s *Store) AppendEvent(event common.Event) error {
+	eventStr, err := s.marshalEvent(event)
+	if err != nil {
+		return err
+	}
 
+	_, err = s.file.WriteString(eventStr)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
+// GetAllEvents returns a list with all the events saved in the store logs
 func (s *Store) GetAllEvents() ([]common.Event, error) {
 	var events []common.Event
 
 	scanner := bufio.NewScanner(s.file)
 
 	// read line by line from the file
-	var lines []string
+	var lines [][]byte
 	for scanner.Scan() {
-		lines = append(lines, scanner.Text())
+		lines = append(lines, scanner.Bytes())
 	}
 
 	if err := scanner.Err(); err != nil {
 		return nil, err
 	}
 
-	return nil, nil
+	for _, line := range lines {
+		event, err := s.unmarshalEvent(line)
+		if err != nil {
+			return nil, err
+		}
+		events = append(events, event)
+	}
+
+	return events, nil
 }
 
 // createStore creates the file that stores all the logs, only if that file doesn't exist at the moment of calling
@@ -68,25 +86,15 @@ func (s *Store) createStore() error {
 	return nil
 }
 
-// parseEvent helper function to parse a line of bytes read by the store.
-func (s *Store) parseEvent(line string) (common.Event, error) {
-	splitStr := strings.Split(line, ",")
+// marshalEvnet helper function to write an event as a string.
+func (s *Store) marshalEvent(event common.Event) (string, error) {
+	data, err := json.Marshal(event)
+	return string(data), err
+}
 
-	if len(splitStr) <= 2 {
-		return nil, ErrEventFormatWrong
-	}
-
-	eventType, err := strconv.ParseInt(splitStr[0], 10, 64)
-	if err != nil {
-		return nil, err
-	}
-
-	eventID, err := strconv.ParseInt(splitStr[1], 10, 64)
-	if err != nil {
-		return nil, err
-	}
-
-	accountID, err := strconv.ParseInt(splitStr[2], 10, 64)
+// unmarshalEvent helper function to parse a line of bytes read by the store.
+func (s *Store) unmarshalEvent(data []byte) (common.Event, error) {
+	eventType, err := common.UnmarshalEventTypeJSON(data)
 	if err != nil {
 		return nil, err
 	}
@@ -94,27 +102,39 @@ func (s *Store) parseEvent(line string) (common.Event, error) {
 	switch eventType {
 
 	case common.OrdersCanceledEvent:
-		order := common.Order{
-			ID:        eventID,
-			AccountID: accountID,
-			Type:      eventType,
-		}
+		var ordersCanceled common.OrderCanceled
+		err := unmarshalEvent(data, &ordersCanceled)
+		return &ordersCanceled, err
 
-		return nil, err
 	case common.OrdersPlacedEvent:
+		var ordersPlaced common.OrderPlaced
+		err := unmarshalEvent(data, &ordersPlaced)
+		return &ordersPlaced, err
 
 	case common.FundsCreditedEvent:
+		var fundsCredited common.FundsCredited
+		err := unmarshalEvent(data, &fundsCredited)
+		return &fundsCredited, err
 
 	case common.FundsDebitedEvent:
+		var fundsDebited common.FundsDebited
+		err := unmarshalEvent(data, &fundsDebited)
+		return &fundsDebited, err
 
 	case common.TradeExecutedEvent:
+		var tradeExecuted common.TradeExecuted
+		err := unmarshalEvent(data, &tradeExecuted)
+		return &tradeExecuted, err
 
 	default:
 		return nil, ErrUnknownEvent
 
 	}
+}
 
-	return nil, nil
+func unmarshalEvent(data []byte, event common.Event) error {
+	err := json.Unmarshal(data, event)
+	return err
 }
 
 func (s *Store) writeEvent() {
