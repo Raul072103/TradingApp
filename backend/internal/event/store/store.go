@@ -3,7 +3,15 @@ package store
 import (
 	"TradingSimulation/common"
 	"bufio"
+	"errors"
 	"os"
+	"strconv"
+	"strings"
+)
+
+var (
+	ErrEventFormatWrong = errors.New("the line format isn't separated by commas")
+	ErrUnknownEvent     = errors.New("the evnet number is unknown")
 )
 
 type Store struct {
@@ -61,7 +69,51 @@ func (s *Store) createStore() error {
 }
 
 // parseEvent helper function to parse a line of bytes read by the store.
-func (s *Store) parseEvent(bytes []byte) (common.Event, error) {
+func (s *Store) parseEvent(line string) (common.Event, error) {
+	splitStr := strings.Split(line, ",")
+
+	if len(splitStr) <= 2 {
+		return nil, ErrEventFormatWrong
+	}
+
+	eventType, err := strconv.ParseInt(splitStr[0], 10, 64)
+	if err != nil {
+		return nil, err
+	}
+
+	eventID, err := strconv.ParseInt(splitStr[1], 10, 64)
+	if err != nil {
+		return nil, err
+	}
+
+	accountID, err := strconv.ParseInt(splitStr[2], 10, 64)
+	if err != nil {
+		return nil, err
+	}
+
+	switch eventType {
+
+	case common.OrdersCanceledEvent:
+		order := common.Order{
+			ID:        eventID,
+			AccountID: accountID,
+			Type:      eventType,
+		}
+
+		return nil, err
+	case common.OrdersPlacedEvent:
+
+	case common.FundsCreditedEvent:
+
+	case common.FundsDebitedEvent:
+
+	case common.TradeExecutedEvent:
+
+	default:
+		return nil, ErrUnknownEvent
+
+	}
+
 	return nil, nil
 }
 

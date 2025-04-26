@@ -1,22 +1,22 @@
 package common
 
 type Funds struct {
-	ID        int64
-	AccountID int64
-	Sum       float64
+	ID        int64   `json:"id"`
+	AccountID int64   `json:"accountID"`
+	Sum       float64 `json:"sum"`
 }
 
 type FundsDebited struct {
-	Funds Funds
-	Trade Trade
+	Funds Funds `json:"funds"`
+	Trade Trade `json:"trade"`
 }
 
 type FundsCredited struct {
-	Funds Funds
-	Trade Trade
+	Funds Funds `json:"funds"`
+	Trade Trade `json:"trade"`
 }
 
-func (e *FundsDebited) Type() int {
+func (e *FundsDebited) Type() int64 {
 	return FundsDebitedEvent
 }
 
@@ -32,7 +32,7 @@ func (e *FundsDebited) Sum() float64 {
 	return e.Funds.Sum
 }
 
-func (e *FundsCredited) Type() int {
+func (e *FundsCredited) Type() int64 {
 	return FundsCreditedEvent
 }
 

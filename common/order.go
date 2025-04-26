@@ -1,28 +1,14 @@
 package common
 
-import "errors"
-
 const (
-	BuyOrder  = "BUY_ORDER"
-	SellOrder = "SELL_ORDER"
+	BuyOrder  = "BUY"
+	SellOrder = "SELL"
 )
-
-var ErrOrderTypeIncorrect = errors.New("the order type can be either Buy or Sell")
 
 type Order struct {
 	ID        int64
 	AccountID int64
-	Type      string
-}
-
-func NewOrder(orderType string) (Order, error) {
-	var order Order
-
-	if orderType != BuyOrder && orderType != SellOrder {
-		return order, ErrOrderTypeIncorrect
-	}
-
-	return order, nil
+	Type      int64
 }
 
 type OrderPlaced struct {
@@ -33,7 +19,7 @@ type OrderCanceled struct {
 	Order Order
 }
 
-func (e *OrderPlaced) Type() int {
+func (e *OrderPlaced) Type() int64 {
 	return OrdersPlacedEvent
 }
 
@@ -45,7 +31,7 @@ func (e *OrderPlaced) AccountIDs() []int64 {
 	return []int64{e.Order.AccountID}
 }
 
-func (e *OrderCanceled) Type() int {
+func (e *OrderCanceled) Type() int64 {
 	return OrdersCanceledEvent
 }
 

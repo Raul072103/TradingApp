@@ -10,7 +10,7 @@ type TradeExecuted struct {
 	Trade Trade
 }
 
-func (e *TradeExecuted) Type() int {
+func (e *TradeExecuted) Type() int64 {
 	return TradeExecutedEvent
 }
 
