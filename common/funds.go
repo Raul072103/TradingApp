@@ -1,19 +1,17 @@
 package common
 
-type Funds struct {
-	ID        int64   `json:"id"`
-	AccountID int64   `json:"accountID"`
-	Sum       float64 `json:"sum"`
-}
-
 type FundsDebited struct {
-	Funds Funds `json:"funds"`
-	Trade Trade `json:"trade"`
+	EventID   int64   `json:"id"`
+	AccountID int64   `json:"account_id"`
+	Sum       float64 `json:"sum"`
+	Trade     Trade   `json:"trade"`
 }
 
 type FundsCredited struct {
-	Funds Funds `json:"funds"`
-	Trade Trade `json:"trade"`
+	EventID   int64   `json:"id"`
+	AccountID int64   `json:"account_id"`
+	Sum       float64 `json:"sum"`
+	Trade     Trade   `json:"Trade"`
 }
 
 func (e *FundsDebited) Type() int64 {
@@ -21,15 +19,11 @@ func (e *FundsDebited) Type() int64 {
 }
 
 func (e *FundsDebited) ID() int64 {
-	return e.Funds.ID
+	return e.EventID
 }
 
 func (e *FundsDebited) AccountIDs() []int64 {
-	return []int64{e.Funds.AccountID}
-}
-
-func (e *FundsDebited) Sum() float64 {
-	return e.Funds.Sum
+	return []int64{e.AccountID}
 }
 
 func (e *FundsCredited) Type() int64 {
@@ -37,13 +31,9 @@ func (e *FundsCredited) Type() int64 {
 }
 
 func (e *FundsCredited) ID() int64 {
-	return e.Funds.ID
+	return e.EventID
 }
 
 func (e *FundsCredited) AccountIDs() []int64 {
-	return []int64{e.Funds.AccountID}
-}
-
-func (e *FundsCredited) Sum() float64 {
-	return e.Funds.Sum
+	return []int64{e.AccountID}
 }

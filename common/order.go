@@ -6,17 +6,19 @@ const (
 )
 
 type Order struct {
-	ID        int64
-	AccountID int64
-	Type      int64
+	Type int64 // BuyOrder || SellOrder
 }
 
 type OrderPlaced struct {
-	Order Order
+	EventID   int64 `json:"id"`
+	AccountID int64 `json:"account_id"`
+	Order     Order `json:"order"`
 }
 
 type OrderCanceled struct {
-	Order Order
+	EventID   int64 `json:"id"`
+	AccountID int64 `json:"account_id"`
+	Order     Order `json:"order"`
 }
 
 func (e *OrderPlaced) Type() int64 {
@@ -24,11 +26,11 @@ func (e *OrderPlaced) Type() int64 {
 }
 
 func (e *OrderPlaced) ID() int64 {
-	return e.Order.ID
+	return e.EventID
 }
 
 func (e *OrderPlaced) AccountIDs() []int64 {
-	return []int64{e.Order.AccountID}
+	return []int64{e.AccountID}
 }
 
 func (e *OrderCanceled) Type() int64 {
@@ -36,9 +38,9 @@ func (e *OrderCanceled) Type() int64 {
 }
 
 func (e *OrderCanceled) ID() int64 {
-	return e.Order.ID
+	return e.EventID
 }
 
 func (e *OrderCanceled) AccountIDs() []int64 {
-	return []int64{e.Order.AccountID}
+	return []int64{e.AccountID}
 }

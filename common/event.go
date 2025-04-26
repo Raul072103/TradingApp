@@ -12,10 +12,8 @@ const (
 	TradeExecutedEvent  = 4
 )
 
-type EventJSON struct {
-	Type       int64   `json:"type"`
-	ID         int64   `json:"id"`
-	AccountIDs []int64 `json:"account_ids"`
+type EventTypeJSON struct {
+	Type int64 `json:"type"`
 }
 
 type Event interface {
@@ -24,9 +22,9 @@ type Event interface {
 	AccountIDs() []int64
 }
 
-// UnmarshalEventJSON unmarshal an EventJSON struct into a JSON byte slice.
-func UnmarshalEventJSON(data []byte) (EventJSON, error) {
-	var event EventJSON
+// UnmarshalEventTypeJSON unmarshal an EventJSON struct into the event code.
+func UnmarshalEventTypeJSON(data []byte) (int64, error) {
+	var event EventTypeJSON
 	err := json.Unmarshal(data, &event)
-	return event, err
+	return event.Type, err
 }

@@ -1,9 +1,9 @@
 package common
 
 type Trade struct {
-	ID         int64
-	AccountIDs []int64
-	Orders     []Order
+	ID         int64         `json:"id"`
+	AccountIDs []int64       `json:"account_id"`
+	Orders     []OrderPlaced `json:"orders"`
 }
 
 type TradeExecuted struct {
