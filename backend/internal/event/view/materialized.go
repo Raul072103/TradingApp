@@ -117,6 +117,8 @@ func (view *MaterializedView) handleEvent(currEvent event.Event) error {
 		accountState.CanceledOrders[orderCanceled.Order.ID] = orderCanceled.Order
 		accountState.Events = append(accountState.Events, orderCanceled)
 
+		// TODO() delete events related to the order canceled
+
 		view.Orders = append(view.Orders, orderCanceled.Order)
 		view.Accounts[accountID] = accountState
 

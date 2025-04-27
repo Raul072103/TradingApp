@@ -5,6 +5,7 @@ import "time"
 const (
 	SuccessfulTrade = "SUCCESSFUL"
 	ActiveTrade     = "ACTIVE"
+	InactiveTrade   = "INACTIVE"
 )
 
 type Trade struct {
