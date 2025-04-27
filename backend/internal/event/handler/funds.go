@@ -21,6 +21,8 @@ func (handler *fundsHandler) Run() error {
 
 		switch eventType {
 		case event.FundsCreditedEvent:
+			fundsCredited := currEvent.(*event.FundsCredited)
+
 			events, err := handler.handleFundsCredited(currEvent)
 			if err != nil {
 				return err
@@ -28,12 +30,21 @@ func (handler *fundsHandler) Run() error {
 			if events == nil {
 				// do nothing
 			} else {
-				// TODO() send a SUCCESSFUL TRADE EVENT
+				underlyingTrade := fundsCredited.Trade
+				underlyingTrade.Status = event.SuccessfulTrade
+
+				executedTradeEvent := event.TradeExecuted{
+					Trade: underlyingTrade,
+				}
+
+				handler.ProcessedEventsChannel <- &executedTradeEvent
 				handler.ProcessedEventsChannel <- events[0]
 				handler.ProcessedEventsChannel <- events[1]
 			}
 
 		case event.FundsDebitedEvent:
+			fundsDebited := currEvent.(*event.FundsDebited)
+
 			events, err := handler.handleFundsDebited(currEvent)
 			if err != nil {
 				return err
@@ -41,7 +52,14 @@ func (handler *fundsHandler) Run() error {
 			if events == nil {
 				// do nothing
 			} else {
-				// TODO() send a SUCCESSFUL TRADE EVENT
+				underlyingTrade := fundsDebited.Trade
+				underlyingTrade.Status = event.SuccessfulTrade
+
+				executedTradeEvent := event.TradeExecuted{
+					Trade: underlyingTrade,
+				}
+
+				handler.ProcessedEventsChannel <- &executedTradeEvent
 				handler.ProcessedEventsChannel <- events[0]
 				handler.ProcessedEventsChannel <- events[1]
 			}
