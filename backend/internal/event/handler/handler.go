@@ -19,6 +19,10 @@ type Handler struct {
 	MaterializedView *view.MaterializedView
 	EventStore       *store.Store
 	Channel          Channel
+	eventsCounter    int64
+	funds            fundsHandler
+	orders           ordersHandler
+	trades           tradesHandler
 }
 
 var (
@@ -26,7 +30,7 @@ var (
 	ErrHandlerCaseLogic = errors.New("error after handling the event type")
 )
 
-func Run(mainChannel chan event.Event, processedEventsChannel chan event.Event, view *view.MaterializedView) error {
+func New(mainChannel chan event.Event, processedEventsChannel chan event.Event, view *view.MaterializedView) Handler {
 	var handler Handler
 	handler.MaterializedView = view
 
@@ -35,8 +39,7 @@ func Run(mainChannel chan event.Event, processedEventsChannel chan event.Event, 
 	handler.Channel.Funds = make(chan event.Event)
 	handler.Channel.Trades = make(chan event.Event)
 	handler.Channel.Orders = make(chan event.Event)
-
-	errorChannel := make(chan error)
+	handler.eventsCounter = 0
 
 	fundsHandler := fundsHandler{
 		MainChannel:            mainChannel,
@@ -59,9 +62,19 @@ func Run(mainChannel chan event.Event, processedEventsChannel chan event.Event, 
 		OrdersChannel:          handler.Channel.Orders,
 	}
 
+	handler.funds = fundsHandler
+	handler.trades = tradesHandler
+	handler.orders = ordersHandler
+
+	return handler
+}
+
+func (handler *Handler) Run() error {
+	errorChannel := make(chan error)
+
 	// start Funds Handler
 	go func() {
-		err := fundsHandler.Run()
+		err := handler.funds.Run()
 		if err != nil {
 			errorChannel <- err
 		}
@@ -69,7 +82,7 @@ func Run(mainChannel chan event.Event, processedEventsChannel chan event.Event, 
 
 	// start Orders Handler
 	go func() {
-		err := ordersHandler.Run()
+		err := handler.orders.Run()
 		if err != nil {
 			errorChannel <- err
 		}
@@ -77,7 +90,7 @@ func Run(mainChannel chan event.Event, processedEventsChannel chan event.Event, 
 
 	// start Trades Handler
 	go func() {
-		err := tradesHandler.Run()
+		err := handler.trades.Run()
 		if err != nil {
 			errorChannel <- err
 		}
@@ -99,29 +112,39 @@ func Run(mainChannel chan event.Event, processedEventsChannel chan event.Event, 
 func (handler *Handler) HandleEvent(currEvent event.Event) error {
 	eventType := currEvent.Type()
 
-	// TODO() assign ID to events
-
 	switch eventType {
 
 	case event.OrdersCanceledEvent:
-		handler.Channel.Orders <- currEvent
+		orderCanceled := currEvent.(*event.OrderCanceled)
+		orderCanceled.EventID = handler.eventsCounter
+		handler.Channel.Orders <- orderCanceled
 
 	case event.OrdersPlacedEvent:
-		handler.Channel.Orders <- currEvent
+		orderPlaced := currEvent.(*event.OrderPlaced)
+		orderPlaced.EventID = handler.eventsCounter
+		handler.Channel.Orders <- orderPlaced
 
 	case event.FundsCreditedEvent:
-		handler.Channel.Funds <- currEvent
+		fundsCredited := currEvent.(*event.FundsCredited)
+		fundsCredited.EventID = handler.eventsCounter
+		handler.Channel.Funds <- fundsCredited
 
 	case event.FundsDebitedEvent:
-		handler.Channel.Funds <- currEvent
+		fundsDebited := currEvent.(*event.FundsDebited)
+		fundsDebited.EventID = handler.eventsCounter
+		handler.Channel.Funds <- fundsDebited
 
 	case event.TradeExecutedEvent:
-		handler.Channel.Trades <- currEvent
+		tradeExecuted := currEvent.(*event.TradeExecuted)
+		tradeExecuted.EventID = handler.eventsCounter
+		handler.Channel.Trades <- tradeExecuted
 
 	default:
 		return ErrUnknownEvent
 
 	}
+
+	handler.eventsCounter += 1
 
 	return ErrHandlerCaseLogic
 }
