@@ -3,6 +3,7 @@ package handler
 import "TradingSimulation/backend/internal/event"
 
 type ordersHandler struct {
+	MainChannel   chan event.Event
 	OrdersChannel chan event.Event
 }
 

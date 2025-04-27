@@ -38,12 +38,14 @@ func Run(mainChannel chan event.Event, view *view.MaterializedView) error {
 	errorChannel := make(chan error)
 
 	fundsHandler := fundsHandler{
+		MainChannel:      mainChannel,
 		FundsChannel:     handler.Channel.Funds,
 		ActiveTrades:     make(map[int64]event.Trade),
 		MaterializedView: handler.MaterializedView,
 	}
 
 	tradesHandler := tradesHandler{
+		MainChannel:      mainChannel,
 		TradesChannel:    handler.Channel.Trades,
 		MaterializedView: handler.MaterializedView,
 	}

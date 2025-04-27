@@ -6,6 +6,7 @@ import (
 )
 
 type fundsHandler struct {
+	MainChannel  chan event.Event
 	FundsChannel chan event.Event
 	// Every active trade has 2 events, debited, credited. This map keeps count of the related events based on Trade ID.
 	ActiveTrades     map[int64]event.Trade

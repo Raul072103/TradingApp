@@ -1,4 +1,4 @@
-<mxfile host="drawio-plugin" modified="2025-04-27T13:46:25.565Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36" etag="As3aRLgdwADjaiOCHz9H" version="22.1.22" type="embed">
+<mxfile host="drawio-plugin" modified="2025-04-27T14:17:23.678Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36" etag="u0kEbmI-1DZB7_bTK-7r" version="22.1.22" type="embed">
   <diagram id="j8pSVxzO-WaVZRyoJmWz" name="Page-1">
     <mxGraphModel dx="2535" dy="882" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
@@ -345,6 +345,18 @@
         </mxCell>
         <mxCell id="119" value="Trade Executed (Status: ACTIVE)" style="text;html=1;strokeColor=#ae4132;fillColor=#fad9d5;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
           <mxGeometry x="25" y="1030" width="195" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="120" value="Main Channel" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="205" y="320" width="135" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="121" value="Orders Channel" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="87.5" y="615" width="135" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="122" value="Funds Channel" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="345" y="615" width="135" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="123" value="Trades Channel" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="625" y="615" width="135" height="30" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
