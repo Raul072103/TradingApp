@@ -3,6 +3,12 @@ package handler
 import "TradingSimulation/backend/internal/event"
 
 type ordersHandler struct {
+	OrdersChannel chan event.Event
+}
+
+func (handler *ordersHandler) Run() error {
+
+	return nil
 }
 
 func (handler *ordersHandler) CancelOrder(order event.Order) error {

@@ -7,12 +7,17 @@ import (
 	"errors"
 )
 
+type Channel struct {
+	MainChannel chan event.Event
+	Funds       chan event.Event
+	Orders      chan event.Event
+	Trades      chan event.Event
+}
+
 type Handler struct {
-	Funds            fundsHandler
-	Orders           ordersHandler
-	Trades           tradesHandler
 	MaterializedView *view.MaterializedView
 	EventStore       *store.Store
+	Channel          Channel
 }
 
 var (
@@ -21,57 +26,93 @@ var (
 	ErrHandlerCaseLogic  = errors.New("error after handling the event type")
 )
 
-func New() (Handler, error) {
+func Run(mainChannel chan event.Event, view *view.MaterializedView) error {
 	var handler Handler
+	handler.MaterializedView = view
 
-	return handler, nil
+	handler.Channel.MainChannel = mainChannel
+	handler.Channel.Funds = make(chan event.Event)
+	handler.Channel.Trades = make(chan event.Event)
+	handler.Channel.Orders = make(chan event.Event)
+
+	errorChannel := make(chan error)
+
+	fundsHandler := fundsHandler{
+		FundsChannel:     handler.Channel.Funds,
+		ActiveTrades:     make(map[int64]event.Trade),
+		MaterializedView: handler.MaterializedView,
+	}
+
+	tradesHandler := tradesHandler{
+		TradesChannel:    handler.Channel.Trades,
+		MaterializedView: handler.MaterializedView,
+	}
+
+	ordersHandler := ordersHandler{
+		OrdersChannel: handler.Channel.Orders,
+	}
+
+	// start Funds Handler
+	go func() {
+		err := fundsHandler.Run()
+		if err != nil {
+			errorChannel <- err
+		}
+	}()
+
+	// start Orders Handler
+	go func() {
+		err := ordersHandler.Run()
+		if err != nil {
+			errorChannel <- err
+		}
+	}()
+
+	// start Trades Handler
+	go func() {
+		err := tradesHandler.Run()
+		if err != nil {
+			errorChannel <- err
+		}
+	}()
+
+	// start listening to Main channel
+	go func() {
+		for currEvent := range handler.Channel.MainChannel {
+			err := handler.HandleEvent(currEvent)
+			if err != nil {
+				errorChannel <- err
+			}
+		}
+	}()
+
+	return <-errorChannel
 }
 
-func (handler *Handler) HandleEvent(currEvent event.Event) (event.Event, error) {
+func (handler *Handler) HandleEvent(currEvent event.Event) error {
 	eventType := currEvent.Type()
 
 	switch eventType {
 
 	case event.OrdersCanceledEvent:
-		// pass it to orders handler
-		orderCanceled := currEvent.(*event.OrderCanceled)
-		err := handler.Orders.CancelOrder(orderCanceled.Order)
-		if err != nil {
-			return nil, err
-		}
+		handler.Channel.Orders <- currEvent
 
 	case event.OrdersPlacedEvent:
-		// if it is a buy Order check if the user has sufficient funds at the moment
-		orderPlaced := currEvent.(*event.OrderPlaced)
-		if orderPlaced.Order.Type == event.BuyOrder {
-			accountState, err := handler.MaterializedView.GetAccount(orderPlaced.AccountID)
-			if err != nil {
-				return nil, err
-			}
-
-			if accountState.Funds < orderPlaced.Order {
-				return nil, ErrInsufficientFunds
-			}
-		}
-		// pass it to orders handler
+		handler.Channel.Orders <- currEvent
 
 	case event.FundsCreditedEvent:
-		// if insufficient funds, return a CancerOrderEvent
-		// pass it to funds handler
+		handler.Channel.Funds <- currEvent
 
 	case event.FundsDebitedEvent:
-		// check if user has available funds, if not cancelOrder and return a new event
-		// TODO() add motive to Canceled Order Event
-		// pass it to funds handler
+		handler.Channel.Funds <- currEvent
 
 	case event.TradeExecutedEvent:
-		// this happens only if there were enough funds in user's account at the time of placing the order
-		// pass it to trades handler
+		handler.Channel.Trades <- currEvent
 
 	default:
-		return nil, ErrUnknownEvent
+		return ErrUnknownEvent
 
 	}
 
-	return nil, ErrHandlerCaseLogic
+	return ErrHandlerCaseLogic
 }
