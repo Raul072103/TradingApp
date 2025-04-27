@@ -23,7 +23,7 @@ func (handler *ordersHandler) Run() error {
 		handler.Stocks,
 	)
 
-	errorChannel := make(chan error)
+	errorChannel := make(chan error, 100)
 
 	go func() {
 		err := matchingService.Run()

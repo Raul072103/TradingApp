@@ -36,16 +36,16 @@ func New(mainChannel chan event.Event, processedEventsChannel chan event.Event, 
 
 	handler.Channel.Main = mainChannel
 	handler.Channel.ProcessedEvents = processedEventsChannel
-	handler.Channel.Funds = make(chan event.Event)
-	handler.Channel.Trades = make(chan event.Event)
-	handler.Channel.Orders = make(chan event.Event)
+	handler.Channel.Funds = make(chan event.Event, 100)
+	handler.Channel.Trades = make(chan event.Event, 100)
+	handler.Channel.Orders = make(chan event.Event, 100)
 	handler.eventsCounter = 0
 
 	fundsHandler := fundsHandler{
 		MainChannel:            mainChannel,
 		ProcessedEventsChannel: handler.Channel.ProcessedEvents,
 		FundsChannel:           handler.Channel.Funds,
-		ActiveTrades:           make(map[int64]event.Event),
+		ActiveTrades:           make(map[int64]event.Event, 100),
 		MaterializedView:       handler.MaterializedView,
 	}
 
