@@ -13,6 +13,11 @@ var (
 	ErrUnknownEvent     = errors.New("the evnet number is unknown")
 )
 
+type logStruct struct {
+	Event     any   `json:"event"`
+	EventType int64 `json:"type"`
+}
+
 type Store struct {
 	file *os.File
 	path string
@@ -99,37 +104,49 @@ func (s *Store) unmarshalEvent(data []byte) (event.Event, error) {
 		return nil, err
 	}
 
+	var logStruct logStruct
+
 	switch eventType {
 
 	case event.OrdersCanceledEvent:
 		var ordersCanceled event.OrderCanceled
-		err := unmarshalEvent(data, &ordersCanceled)
+		err := unmarshalLogStruct(data, &logStruct)
+		ordersCanceled = logStruct.Event.(event.OrderCanceled)
 		return &ordersCanceled, err
 
 	case event.OrdersPlacedEvent:
 		var ordersPlaced event.OrderPlaced
-		err := unmarshalEvent(data, &ordersPlaced)
+		err := unmarshalLogStruct(data, &logStruct)
+		ordersPlaced = logStruct.Event.(event.OrderPlaced)
 		return &ordersPlaced, err
 
 	case event.FundsCreditedEvent:
 		var fundsCredited event.FundsCredited
-		err := unmarshalEvent(data, &fundsCredited)
+		err := unmarshalLogStruct(data, &logStruct)
+		fundsCredited = logStruct.Event.(event.FundsCredited)
 		return &fundsCredited, err
 
 	case event.FundsDebitedEvent:
 		var fundsDebited event.FundsDebited
-		err := unmarshalEvent(data, &fundsDebited)
+		err := unmarshalLogStruct(data, &logStruct)
+		fundsDebited = logStruct.Event.(event.FundsDebited)
 		return &fundsDebited, err
 
 	case event.TradeExecutedEvent:
 		var tradeExecuted event.TradeExecuted
-		err := unmarshalEvent(data, &tradeExecuted)
+		err := unmarshalLogStruct(data, &logStruct)
+		tradeExecuted = logStruct.Event.(event.TradeExecuted)
 		return &tradeExecuted, err
 
 	default:
 		return nil, ErrUnknownEvent
 
 	}
+}
+
+func unmarshalLogStruct(data []byte, logStruct *logStruct) error {
+	err := json.Unmarshal(data, logStruct)
+	return err
 }
 
 func unmarshalEvent(data []byte, event event.Event) error {
