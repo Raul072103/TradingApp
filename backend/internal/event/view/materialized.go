@@ -215,7 +215,7 @@ func initializeAccountState() AccountState {
 		SellOrders:       make([]event.Order, 0),
 		CanceledOrders:   make(map[int64]event.Order),
 		SuccessfulOrders: make([]event.Order, 0),
-		Funds:            0,
+		Funds:            1_000_000.0,
 		Events:           make([]event.Event, 0),
 	}
 }
