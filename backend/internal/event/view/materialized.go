@@ -5,10 +5,6 @@ import (
 	"errors"
 )
 
-// List of accounts
-// List of trades
-// List of orders
-
 var (
 	ErrUnknownEventView            = errors.New("unknown event")
 	ErrUnknownOrderType            = errors.New("unknown order type")
