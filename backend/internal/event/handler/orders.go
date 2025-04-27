@@ -11,8 +11,8 @@ type ordersHandler struct {
 	ProcessedEventsChannel chan event.Event
 	OrdersChannel          chan event.Event
 	Stocks                 map[int64]view.Stock
-	matchingChannel        chan event.Order
-	cancelOrdersChannel    chan event.Order
+	matchingChannel        chan event.Order // matchingChannel sends to the matching service a new order to match
+	cancelOrdersChannel    chan event.Order // cancelOrdersChannel sends to the matching service a cancel order
 }
 
 func (handler *ordersHandler) Run() error {

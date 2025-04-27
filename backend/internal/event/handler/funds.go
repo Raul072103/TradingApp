@@ -28,6 +28,7 @@ func (handler *fundsHandler) Run() error {
 			if events == nil {
 				// do nothing
 			} else {
+				// TODO() send a SUCCESSFUL TRADE EVENT
 				handler.ProcessedEventsChannel <- events[0]
 				handler.ProcessedEventsChannel <- events[1]
 			}
@@ -40,6 +41,7 @@ func (handler *fundsHandler) Run() error {
 			if events == nil {
 				// do nothing
 			} else {
+				// TODO() send a SUCCESSFUL TRADE EVENT
 				handler.ProcessedEventsChannel <- events[0]
 				handler.ProcessedEventsChannel <- events[1]
 			}
