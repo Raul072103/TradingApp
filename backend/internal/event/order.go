@@ -25,6 +25,7 @@ type OrderCanceled struct {
 	EventID   int64     `json:"event_id"`
 	AccountID int64     `json:"account_id"`
 	Timestamp time.Time `json:"timestamp"`
+	Reason    string    `json:"reason"`
 	Order     Order     `json:"order"`
 }
 
