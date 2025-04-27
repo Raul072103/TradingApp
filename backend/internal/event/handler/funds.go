@@ -28,13 +28,20 @@ func (handler *fundsHandler) Run() error {
 			if events == nil {
 				// do nothing
 			} else {
-				handler.MainChannel
+				handler.ProcessedEventsChannel <- events[0]
+				handler.ProcessedEventsChannel <- events[1]
 			}
 
 		case event.FundsDebitedEvent:
 			events, err := handler.handleFundsDebited(currEvent)
 			if err != nil {
 				return err
+			}
+			if events == nil {
+				// do nothing
+			} else {
+				handler.ProcessedEventsChannel <- events[0]
+				handler.ProcessedEventsChannel <- events[1]
 			}
 
 		}
