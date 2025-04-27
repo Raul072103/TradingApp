@@ -2,6 +2,7 @@ package event
 
 import (
 	"encoding/json"
+	"time"
 )
 
 const (
@@ -20,6 +21,7 @@ type Event interface {
 	Type() int64
 	ID() int64
 	AccountIDs() []int64
+	Time() time.Time
 }
 
 // UnmarshalEventTypeJSON unmarshal an EventJSON struct into the event code.

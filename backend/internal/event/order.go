@@ -1,5 +1,7 @@
 package event
 
+import "time"
+
 const (
 	BuyOrder  = "BUY"
 	SellOrder = "SELL"
@@ -13,15 +15,17 @@ type Order struct {
 }
 
 type OrderPlaced struct {
-	EventID   int64 `json:"id"`
-	AccountID int64 `json:"account_id"`
-	Order     Order `json:"order"`
+	EventID   int64     `json:"event_id"`
+	AccountID int64     `json:"account_id"`
+	Timestamp time.Time `json:"timestamp"`
+	Order     Order     `json:"order"`
 }
 
 type OrderCanceled struct {
-	EventID   int64 `json:"id"`
-	AccountID int64 `json:"account_id"`
-	Order     Order `json:"order"`
+	EventID   int64     `json:"event_id"`
+	AccountID int64     `json:"account_id"`
+	Timestamp time.Time `json:"timestamp"`
+	Order     Order     `json:"order"`
 }
 
 func (e *OrderPlaced) Type() int64 {
@@ -36,6 +40,10 @@ func (e *OrderPlaced) AccountIDs() []int64 {
 	return []int64{e.AccountID}
 }
 
+func (e *OrderPlaced) Time() time.Time {
+	return e.Timestamp
+}
+
 func (e *OrderCanceled) Type() int64 {
 	return OrdersCanceledEvent
 }
@@ -46,4 +54,8 @@ func (e *OrderCanceled) ID() int64 {
 
 func (e *OrderCanceled) AccountIDs() []int64 {
 	return []int64{e.AccountID}
+}
+
+func (e *OrderCanceled) Time() time.Time {
+	return e.Timestamp
 }
