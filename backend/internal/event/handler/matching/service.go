@@ -148,6 +148,10 @@ func (service *Service) Run() error {
 			}
 
 			service.ActiveOrders[stockID] = orderBook
+
+		default:
+			// ensures non-blocking mechanism
+
 		}
 	}
 }
