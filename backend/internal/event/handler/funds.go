@@ -92,7 +92,7 @@ func (handler *fundsHandler) handleFundsDebited(currEvent event.Event) ([]event.
 
 	fundsCredited, exists := handler.ActiveTrades[fundsDebited.Trade.ID]
 	if exists {
-		fundsCredited = fundsCredited.(*event.FundsDebited)
+		fundsCredited = fundsCredited.(*event.FundsCredited)
 		delete(handler.ActiveTrades, fundsDebited.Trade.ID)
 
 		return []event.Event{fundsDebited, fundsCredited}, nil
