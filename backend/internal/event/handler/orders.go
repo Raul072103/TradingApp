@@ -3,8 +3,9 @@ package handler
 import "TradingSimulation/backend/internal/event"
 
 type ordersHandler struct {
-	MainChannel   chan event.Event
-	OrdersChannel chan event.Event
+	MainChannel            chan event.Event
+	ProcessedEventsChannel chan event.Event
+	OrdersChannel          chan event.Event
 }
 
 func (handler *ordersHandler) Run() error {

@@ -6,9 +6,10 @@ import (
 )
 
 type tradesHandler struct {
-	MainChannel      chan event.Event
-	TradesChannel    chan event.Event
-	MaterializedView *view.MaterializedView
+	MainChannel            chan event.Event
+	ProcessedEventsChannel chan event.Event
+	TradesChannel          chan event.Event
+	MaterializedView       *view.MaterializedView
 }
 
 func (handler *tradesHandler) Run() error {
