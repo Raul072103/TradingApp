@@ -8,10 +8,10 @@ const (
 )
 
 type Order struct {
-	ID    int64 `json:"id"`
-	Type  int64 `json:"type"` // BuyOrder || SellOrder
-	Count int64 `json:"count"`
-	Stock int64 `json:"stock"`
+	ID    int64  `json:"id"`
+	Type  string `json:"type"` // BuyOrder || SellOrder
+	Count int64  `json:"count"`
+	Stock int64  `json:"stock"`
 }
 
 type OrderPlaced struct {
