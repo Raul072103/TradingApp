@@ -33,9 +33,23 @@ func (handler *Handler) HandleEvent(currEvent event.Event) (event.Event, error) 
 
 	case event.OrdersCanceledEvent:
 		// pass it to orders handler
+		orderCanceled := currEvent.(*event.OrderCanceled)
+		err := handler.Orders.CancelOrder(orderCanceled.Order)
+		if err != nil {
+			return nil, err
+		}
 
 	case event.OrdersPlacedEvent:
 		// if it is a buy Order check if the user has sufficient funds at the moment
+		orderPlaced := currEvent.(*event.OrderPlaced)
+		if orderPlaced.Order.Type == event.BuyOrder {
+			accountState, err := handler.MaterializedView.GetAccount(orderPlaced.AccountID)
+			if err != nil {
+				return nil, err
+			}
+
+			if accountState.Funds < orderPlaced.Order.
+		}
 		// pass it to orders handler
 
 	case event.FundsCreditedEvent:
