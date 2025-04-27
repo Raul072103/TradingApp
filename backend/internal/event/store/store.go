@@ -1,7 +1,7 @@
 package store
 
 import (
-	"TradingSimulation/common"
+	"TradingSimulation/backend/internal/event"
 	"bufio"
 	"encoding/json"
 	"errors"
@@ -34,7 +34,7 @@ func (s *Store) Close() error {
 }
 
 // AppendEvent appends an event to the log file of the vent store.
-func (s *Store) AppendEvent(event common.Event) error {
+func (s *Store) AppendEvent(event event.Event) error {
 	eventStr, err := s.marshalEvent(event)
 	if err != nil {
 		return err
@@ -48,8 +48,8 @@ func (s *Store) AppendEvent(event common.Event) error {
 }
 
 // GetAllEvents returns a list with all the events saved in the store logs
-func (s *Store) GetAllEvents() ([]common.Event, error) {
-	var events []common.Event
+func (s *Store) GetAllEvents() ([]event.Event, error) {
+	var events []event.Event
 
 	scanner := bufio.NewScanner(s.file)
 
@@ -87,42 +87,42 @@ func (s *Store) createStore() error {
 }
 
 // marshalEvnet helper function to write an event as a string.
-func (s *Store) marshalEvent(event common.Event) (string, error) {
+func (s *Store) marshalEvent(event event.Event) (string, error) {
 	data, err := json.Marshal(event)
 	return string(data), err
 }
 
 // unmarshalEvent helper function to parse a line of bytes read by the store.
-func (s *Store) unmarshalEvent(data []byte) (common.Event, error) {
-	eventType, err := common.UnmarshalEventTypeJSON(data)
+func (s *Store) unmarshalEvent(data []byte) (event.Event, error) {
+	eventType, err := event.UnmarshalEventTypeJSON(data)
 	if err != nil {
 		return nil, err
 	}
 
 	switch eventType {
 
-	case common.OrdersCanceledEvent:
-		var ordersCanceled common.OrderCanceled
+	case event.OrdersCanceledEvent:
+		var ordersCanceled event.OrderCanceled
 		err := unmarshalEvent(data, &ordersCanceled)
 		return &ordersCanceled, err
 
-	case common.OrdersPlacedEvent:
-		var ordersPlaced common.OrderPlaced
+	case event.OrdersPlacedEvent:
+		var ordersPlaced event.OrderPlaced
 		err := unmarshalEvent(data, &ordersPlaced)
 		return &ordersPlaced, err
 
-	case common.FundsCreditedEvent:
-		var fundsCredited common.FundsCredited
+	case event.FundsCreditedEvent:
+		var fundsCredited event.FundsCredited
 		err := unmarshalEvent(data, &fundsCredited)
 		return &fundsCredited, err
 
-	case common.FundsDebitedEvent:
-		var fundsDebited common.FundsDebited
+	case event.FundsDebitedEvent:
+		var fundsDebited event.FundsDebited
 		err := unmarshalEvent(data, &fundsDebited)
 		return &fundsDebited, err
 
-	case common.TradeExecutedEvent:
-		var tradeExecuted common.TradeExecuted
+	case event.TradeExecutedEvent:
+		var tradeExecuted event.TradeExecuted
 		err := unmarshalEvent(data, &tradeExecuted)
 		return &tradeExecuted, err
 
@@ -132,7 +132,7 @@ func (s *Store) unmarshalEvent(data []byte) (common.Event, error) {
 	}
 }
 
-func unmarshalEvent(data []byte, event common.Event) error {
+func unmarshalEvent(data []byte, event event.Event) error {
 	err := json.Unmarshal(data, event)
 	return err
 }

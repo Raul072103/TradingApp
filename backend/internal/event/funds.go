@@ -1,17 +1,17 @@
-package common
+package event
 
 type FundsDebited struct {
-	EventID   int64   `json:"id"`
+	EventID   int64   `json:"event_id"`
 	AccountID int64   `json:"account_id"`
 	Sum       float64 `json:"sum"`
 	Trade     Trade   `json:"trade"`
 }
 
 type FundsCredited struct {
-	EventID   int64   `json:"id"`
+	EventID   int64   `json:"event_id"`
 	AccountID int64   `json:"account_id"`
 	Sum       float64 `json:"sum"`
-	Trade     Trade   `json:"Trade"`
+	Trade     Trade   `json:"trade"`
 }
 
 func (e *FundsDebited) Type() int64 {

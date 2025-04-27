@@ -1,4 +1,4 @@
-package common
+package event
 
 const (
 	BuyOrder  = "BUY"
@@ -6,7 +6,10 @@ const (
 )
 
 type Order struct {
-	Type int64 // BuyOrder || SellOrder
+	ID    int64 `json:"id"`
+	Type  int64 `json:"type"` // BuyOrder || SellOrder
+	Count int64 `json:"count"`
+	Stock int64 `json:"stock"`
 }
 
 type OrderPlaced struct {

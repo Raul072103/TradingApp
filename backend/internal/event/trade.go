@@ -1,4 +1,4 @@
-package common
+package event
 
 type Trade struct {
 	ID         int64         `json:"id"`
@@ -7,7 +7,8 @@ type Trade struct {
 }
 
 type TradeExecuted struct {
-	Trade Trade
+	EventID int64 `json:"event_id"`
+	Trade   Trade `json:"trade"`
 }
 
 func (e *TradeExecuted) Type() int64 {
