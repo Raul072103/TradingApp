@@ -76,6 +76,8 @@ func New(events []event.Event) (MaterializedView, error) {
 		},
 	}
 
+	// TODO() initialize accounts
+
 	for _, currEvent := range events {
 		err := materializedView.handleEvent(currEvent)
 		if err != nil {
