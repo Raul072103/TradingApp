@@ -26,12 +26,12 @@ var (
 	ErrHandlerCaseLogic = errors.New("error after handling the event type")
 )
 
-func Run(mainChannel chan event.Event, view *view.MaterializedView) error {
+func Run(mainChannel chan event.Event, processedEventsChannel chan event.Event, view *view.MaterializedView) error {
 	var handler Handler
 	handler.MaterializedView = view
 
 	handler.Channel.Main = mainChannel
-	handler.Channel.ProcessedEvents = make(chan event.Event)
+	handler.Channel.ProcessedEvents = processedEventsChannel
 	handler.Channel.Funds = make(chan event.Event)
 	handler.Channel.Trades = make(chan event.Event)
 	handler.Channel.Orders = make(chan event.Event)
@@ -83,7 +83,7 @@ func Run(mainChannel chan event.Event, view *view.MaterializedView) error {
 		}
 	}()
 
-	// start listening to Main channel
+	// start listening to Main channel for unprocessed events
 	go func() {
 		for currEvent := range handler.Channel.Main {
 			err := handler.HandleEvent(currEvent)
