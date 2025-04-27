@@ -16,8 +16,9 @@ type Handler struct {
 }
 
 var (
-	ErrUnknownEvent     = errors.New("trying to handle unknown event")
-	ErrHandlerCaseLogic = errors.New("error after handling the event type")
+	ErrUnknownEvent      = errors.New("trying to handle unknown event")
+	ErrInsufficientFunds = errors.New("the user doesn't have sufficient funds")
+	ErrHandlerCaseLogic  = errors.New("error after handling the event type")
 )
 
 func New() (Handler, error) {
@@ -48,7 +49,9 @@ func (handler *Handler) HandleEvent(currEvent event.Event) (event.Event, error) 
 				return nil, err
 			}
 
-			if accountState.Funds < orderPlaced.Order.
+			if accountState.Funds < orderPlaced.Order {
+				return nil, ErrInsufficientFunds
+			}
 		}
 		// pass it to orders handler
 
