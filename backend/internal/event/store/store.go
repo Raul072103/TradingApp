@@ -26,7 +26,7 @@ type Store struct {
 // New creates an instance of Store struct an initializes the file based events store.
 func New() (*Store, error) {
 	var store Store
-	store.path = "./container/events.log"
+	store.path = "./events.log"
 
 	err := store.createStore()
 	return &store, err
@@ -82,7 +82,7 @@ func (s *Store) GetAllEvents() ([]event.Event, error) {
 // createStore creates the file that stores all the logs, only if that file doesn't exist at the moment of calling
 // this method.
 func (s *Store) createStore() error {
-	file, err := os.OpenFile(s.path, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
+	file, err := os.OpenFile(s.path, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0777)
 	if err != nil {
 		return err
 	}

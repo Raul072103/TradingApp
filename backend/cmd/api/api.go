@@ -1,6 +1,10 @@
 package main
 
 import (
+	"TradingSimulation/backend/internal/event"
+	"TradingSimulation/backend/internal/event/handler"
+	"TradingSimulation/backend/internal/event/store"
+	"TradingSimulation/backend/internal/event/view"
 	"context"
 	"errors"
 	"github.com/go-chi/chi/v5"
@@ -14,9 +18,16 @@ import (
 	"time"
 )
 
+// TODO() don't forget about filter!
+
 type application struct {
-	config config
-	logger *zap.Logger
+	config           config
+	logger           *zap.Logger
+	eventStore       *store.Store
+	materializedView *view.MaterializedView
+	mainHandler      *handler.Handler
+	mainChannel      chan event.Event
+	processedEvents  chan event.Event
 }
 
 type config struct {
@@ -58,6 +69,15 @@ func (app *application) mount() *chi.Mux {
 	mux.Route("/v1", func(r chi.Router) {
 		r.Get("/health", app.healthCheckHandler)
 
+		r.Get("/executed_trades", app.executedTradesHandler)
+
+		r.Get("/accounts", app.allAccountsHandler)
+		r.Get("/accounts/trades", app.accountTradesHandler)
+		r.Get("/accounts/orders", app.accountOrdersHandler)
+
+		r.Post("/orders", app.addOrderHandler)
+
+		r.Get("/metrics/goroutines", app.goroutineCountHandler)
 	})
 
 	return mux
