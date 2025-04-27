@@ -99,6 +99,8 @@ func Run(mainChannel chan event.Event, processedEventsChannel chan event.Event, 
 func (handler *Handler) HandleEvent(currEvent event.Event) error {
 	eventType := currEvent.Type()
 
+	// TODO() assign ID to events
+
 	switch eventType {
 
 	case event.OrdersCanceledEvent:
