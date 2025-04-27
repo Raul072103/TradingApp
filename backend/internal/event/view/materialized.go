@@ -24,10 +24,10 @@ type Stock struct {
 }
 
 type AccountState struct {
-	BuyOrders        []event.Order `json:"buy_orders"`
-	SellOrders       []event.Order `json:"sell_orders"`
-	CanceledOrders   []event.Order `json:"canceled_orders"`
-	SuccessfulOrders []event.Order `json:"successful_orders"`
+	BuyOrders        []event.Order         `json:"buy_orders"`
+	SellOrders       []event.Order         `json:"sell_orders"`
+	CanceledOrders   map[int64]event.Order `json:"canceled_orders"`
+	SuccessfulOrders []event.Order         `json:"successful_orders"`
 
 	Funds float64 `json:"funds"`
 
@@ -118,13 +118,11 @@ func (view *MaterializedView) handleEvent(currEvent event.Event) error {
 			return ErrCannotCancelAnUnplacedOrder
 		}
 
-		accountState.CanceledOrders = append(accountState.CanceledOrders, orderCanceled.Order)
+		accountState.CanceledOrders[orderCanceled.Order.ID] = orderCanceled.Order
 		accountState.Events = append(accountState.Events, orderCanceled)
 
 		view.Orders = append(view.Orders, orderCanceled.Order)
 		view.Accounts[accountID] = accountState
-
-		// TODO() remove orders from account state if it was canceled
 
 	case event.OrdersPlacedEvent:
 		orderPlaced := currEvent.(*event.OrderPlaced)
@@ -215,7 +213,7 @@ func initializeAccountState() AccountState {
 	return AccountState{
 		BuyOrders:        make([]event.Order, 0),
 		SellOrders:       make([]event.Order, 0),
-		CanceledOrders:   make([]event.Order, 0),
+		CanceledOrders:   make(map[int64]event.Order),
 		SuccessfulOrders: make([]event.Order, 0),
 		Funds:            0,
 		Events:           make([]event.Event, 0),
