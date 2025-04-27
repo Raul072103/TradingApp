@@ -17,6 +17,12 @@ var (
 	ErrTradeHasUnknownUsers        = errors.New("trade has unknwon users")
 )
 
+type Stock struct {
+	ID    int64   `json:"id"`
+	Name  string  `json:"name"`
+	Price float64 `json:"price"`
+}
+
 type AccountState struct {
 	BuyOrders        []event.Order `json:"buy_orders"`
 	SellOrders       []event.Order `json:"sell_orders"`
@@ -25,18 +31,14 @@ type AccountState struct {
 
 	Funds float64 `json:"funds"`
 
-	// Events represent a slice where the latest events are pushed on it
-	Events []event.Event `json:"events"`
+	Events []event.Event `json:"events"` // Events represent a slice where the latest events are pushed on it
 }
 
 type MaterializedView struct {
-	// Accounts map of all the accounts accessible by each AccountID
-	Accounts map[int64]AccountState
-
-	// Trades represent a slice with all the executed trades
-	Trades []event.Trade `json:"trades"`
-	// Orders represent a slice with all the orders placed
-	Orders []event.Order `json:"orders"`
+	Accounts map[int64]AccountState // Accounts map of all the accounts accessible by each AccountID
+	Trades   []event.Trade          `json:"trades"` // Trades represent a slice with all the executed trades
+	Orders   []event.Order          `json:"orders"` // Orders represent a slice with all the orders placed
+	Stocks   map[int64]Stock        `json:"stocks"` // Stocks represents the current stocks traded by this app
 }
 
 // New creates a new Materialized View with all the events that were recorded till that point.
@@ -45,6 +47,38 @@ func New(events []event.Event) (MaterializedView, error) {
 	materializedView.Accounts = make(map[int64]AccountState)
 	materializedView.Trades = make([]event.Trade, 0)
 	materializedView.Orders = make([]event.Order, 0)
+	materializedView.Stocks = map[int64]Stock{
+		0: {
+			ID:    0,
+			Name:  "NVDA",
+			Price: 111.01,
+		},
+		1: {
+			ID:    1,
+			Name:  "TSLA",
+			Price: 284.95,
+		},
+		2: {
+			ID:    2,
+			Name:  "PLTR",
+			Price: 112.78,
+		},
+		3: {
+			ID:    3,
+			Name:  "GOOGL",
+			Price: 161.96,
+		},
+		4: {
+			ID:    4,
+			Name:  "AMZN",
+			Price: 188.99,
+		},
+		5: {
+			ID:    5,
+			Name:  "CRWD",
+			Price: 422.88,
+		},
+	}
 
 	for _, currEvent := range events {
 		err := materializedView.handleEvent(currEvent)

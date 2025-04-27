@@ -1,4 +1,4 @@
-<mxfile host="drawio-plugin" modified="2025-04-27T11:28:11.829Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36" etag="DYqDBhhgcZ2jt6vnzgtv" version="22.1.22" type="embed">
+<mxfile host="drawio-plugin" modified="2025-04-27T12:36:16.863Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36" etag="ySOilksvOrTV5_26Om7R" version="22.1.22" type="embed">
   <diagram id="j8pSVxzO-WaVZRyoJmWz" name="Page-1">
     <mxGraphModel dx="2535" dy="882" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
@@ -73,10 +73,10 @@
         <mxCell id="20" value="Read events" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
           <mxGeometry x="350" y="360" width="120" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="21" value="Handle event" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+        <mxCell id="21" value="Send&lt;br&gt;event" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
           <mxGeometry x="460" y="290" width="60" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="22" value="Handle event" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+        <mxCell id="22" value="Send&lt;br&gt;event update" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
           <mxGeometry x="640" y="290" width="60" height="30" as="geometry" />
         </mxCell>
         <mxCell id="27" value="" style="endArrow=none;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="1" source="7" edge="1">
@@ -213,8 +213,8 @@
             <Array as="points">
               <mxPoint x="630" y="390" />
               <mxPoint x="680" y="390" />
-              <mxPoint x="820" y="390" />
-              <mxPoint x="820" y="220" />
+              <mxPoint x="740" y="390" />
+              <mxPoint x="740" y="220" />
             </Array>
           </mxGeometry>
         </mxCell>
@@ -232,7 +232,7 @@
           <mxGeometry x="346.25" y="410" width="60" height="30" as="geometry" />
         </mxCell>
         <mxCell id="66" value="Reads" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
-          <mxGeometry x="820" y="290" width="60" height="30" as="geometry" />
+          <mxGeometry x="750" y="290" width="60" height="30" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
