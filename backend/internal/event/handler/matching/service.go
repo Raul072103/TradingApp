@@ -18,7 +18,7 @@ type OrderBook struct {
 type Service struct {
 	MainChannel chan event.Event
 	// MatchingChannel channel trough which buy or sell orders are received to be matched
-	OrdersChannel         chan event.Order
+	MatchingChannel       chan event.Order
 	CancelOrdersChannel   chan event.Order
 	Stocks                map[int64]view.Stock
 	ActiveOrders          map[int64]OrderBook
@@ -27,14 +27,14 @@ type Service struct {
 
 func New(
 	mainChannel chan event.Event,
-	ordersChannel chan event.Order,
+	matchingChannel chan event.Order,
 	cancelOrdersChannel chan event.Order,
 	stocks map[int64]view.Stock) Service {
 
 	var service Service
 
 	service.MainChannel = mainChannel
-	service.OrdersChannel = ordersChannel
+	service.MatchingChannel = matchingChannel
 	service.CancelOrdersChannel = cancelOrdersChannel
 	service.Stocks = stocks
 	service.ActiveOrders = make(map[int64]OrderBook)
@@ -52,7 +52,7 @@ func New(
 func (service *Service) Run() error {
 	for {
 		select {
-		case order := <-service.OrdersChannel:
+		case order := <-service.MatchingChannel:
 			orderType := order.Type
 			stockID := order.Stock
 			count := order.Count
