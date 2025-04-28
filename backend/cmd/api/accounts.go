@@ -10,16 +10,18 @@ import (
 
 func (app *application) accountOrdersHandler(w http.ResponseWriter, r *http.Request) {
 	var accountOrders = make(map[int64]struct {
-		BuyOrders  []event.Order `json:"buy_orders"`
-		SellOrders []event.Order `json:"sell_orders"`
+		BuyOrders        []event.Order `json:"buy_orders"`
+		SellOrders       []event.Order `json:"sell_orders"`
+		SuccessfulOrders []event.Order `json:"successful_orders"`
 	})
 
 	for key := range app.materializedView.Accounts {
 		account := app.materializedView.Accounts[key]
 		accountOrders[key] = struct {
-			BuyOrders  []event.Order `json:"buy_orders"`
-			SellOrders []event.Order `json:"sell_orders"`
-		}{BuyOrders: account.BuyOrders, SellOrders: account.SellOrders}
+			BuyOrders        []event.Order `json:"buy_orders"`
+			SellOrders       []event.Order `json:"sell_orders"`
+			SuccessfulOrders []event.Order `json:"successful_orders"`
+		}{BuyOrders: account.BuyOrders, SellOrders: account.SellOrders, SuccessfulOrders: account.SuccessfulOrders}
 	}
 
 	err := writeJSON(w, http.StatusOK, accountOrders)

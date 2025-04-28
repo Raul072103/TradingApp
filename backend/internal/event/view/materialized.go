@@ -193,6 +193,22 @@ func (view *MaterializedView) handleEvent(currEvent event.Event) error {
 			return ErrTradeHasUnknownUsers
 		}
 
+		// Remove the fulfilled order from accountState1
+		switch order1.Type {
+		case event.BuyOrder:
+			accountState1.BuyOrders = removeOrderByID(accountState1.BuyOrders, order1.ID)
+		case event.SellOrder:
+			accountState1.SellOrders = removeOrderByID(accountState1.SellOrders, order1.ID)
+		}
+
+		// Remove the fulfilled order from accountState2
+		switch order2.Type {
+		case event.BuyOrder:
+			accountState2.BuyOrders = removeOrderByID(accountState2.BuyOrders, order2.ID)
+		case event.SellOrder:
+			accountState2.SellOrders = removeOrderByID(accountState2.SellOrders, order2.ID)
+		}
+
 		accountState1.SuccessfulOrders = append(accountState1.SuccessfulOrders, order1)
 		accountState1.Events = append(accountState1.Events, tradeExecuted)
 
@@ -220,4 +236,14 @@ func initializeAccountState() AccountState {
 		Funds:            1_000_000.0,
 		Events:           make([]event.Event, 0),
 	}
+}
+
+func removeOrderByID(orders []event.Order, orderID int64) []event.Order {
+	newOrders := make([]event.Order, 0, len(orders))
+	for _, order := range orders {
+		if order.ID != orderID {
+			newOrders = append(newOrders, order)
+		}
+	}
+	return newOrders
 }
