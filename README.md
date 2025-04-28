@@ -1,16 +1,34 @@
-# Context
+# System Design
 
-This projects simulates a small-scale trading app for stocks
-where users can buy and sell stocks.
+## Context
 
-The architecture of the system will be based on event-sourcing, each command
-being an event that is appended to a read-only log.
+This project simulates a small-scale stock trading application where users can buy and sell stocks.
 
-This project is an assignment I had for Software Design class, I included it
-in my public repositories because it elevates real use cases of
-event sourcing platform and is a well-designed system.
+It is based on **event sourcing**, meaning all system states (orders, trades, balances) are rebuilt by replaying a sequence of immutable events.
+
+Originally developed as a **Software Design 2025 assignment**, it demonstrates real-world use of event sourcing for auditability and historical accuracy.
 
 ## Architecture
 
-- Event sourcing architecture
-- Event logs are saved on file system
+- **Event Sourcing:**
+    - All system changes are captured as events (e.g., OrderPlaced, OrderCancelled, TradeExecuted).
+    - State is reconstructed by replaying the full event history.
+
+- **Event Store:**
+    - Events are persisted in a log file.
+    - The store supports appending and retrieving all events.
+
+- **Domain Model:**
+    - Includes `OrderBook`, `Account`, and `MaterializedView`.
+    - Models react to events to update their internal state.
+
+- **Commands:**
+    - Commands trigger events (e.g., place order, cancel order, credit funds).
+    - Commands do not directly mutate state.
+
+- **Replayability:**
+    - Full system state can be rebuilt anytime from the event log.
+
+## System Design Diagram
+
+![System Design Diagram](./docs/system_design.png)
