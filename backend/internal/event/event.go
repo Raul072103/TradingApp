@@ -1,7 +1,6 @@
 package event
 
 import (
-	"encoding/json"
 	"time"
 )
 
@@ -22,11 +21,4 @@ type Event interface {
 	ID() int64
 	AccountIDs() []int64
 	Time() time.Time
-}
-
-// UnmarshalEventTypeJSON unmarshal an EventJSON struct into the event code.
-func UnmarshalEventTypeJSON(data []byte) (int64, error) {
-	var event EventTypeJSON
-	err := json.Unmarshal(data, &event)
-	return event.Type, err
 }

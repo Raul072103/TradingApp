@@ -83,6 +83,9 @@ func (service *Service) Run() error {
 					service.TradesExecutedCounter++
 					service.MainChannel <- &tradeExecuted
 				} else {
+					if !exists {
+					}
+
 					orderBook.BuyOrders[count] = append(orderBook.BuyOrders[count], order)
 				}
 

@@ -69,11 +69,11 @@ func (s *Store) GetAllEvents() ([]event.Event, error) {
 	}
 
 	for _, line := range lines {
-		event, err := s.unmarshalEvent(line)
+		unmarshalledEvent, err := s.unmarshalEvent(line)
 		if err != nil {
 			return nil, err
 		}
-		events = append(events, event)
+		events = append(events, unmarshalledEvent)
 	}
 
 	return events, nil
@@ -93,64 +93,61 @@ func (s *Store) createStore() error {
 
 // marshalEvnet helper function to write an event as a string.
 func (s *Store) marshalEvent(event event.Event) (string, error) {
-	data, err := json.Marshal(event)
+	logStruct := logStruct{
+		Event:     event,
+		EventType: event.Type(),
+	}
+	data, err := json.Marshal(logStruct)
 	return string(data), err
 }
 
 // unmarshalEvent helper function to parse a line of bytes read by the store.
 func (s *Store) unmarshalEvent(data []byte) (event.Event, error) {
-	eventType, err := event.UnmarshalEventTypeJSON(data)
+	var logStruct logStruct
+	err := unmarshalLogStruct(data, &logStruct)
 	if err != nil {
 		return nil, err
 	}
 
-	var logStruct logStruct
+	// Marshal the Event (map[string]any) back to JSON
+	eventBytes, err := json.Marshal(logStruct.Event)
+	if err != nil {
+		return nil, err
+	}
 
-	switch eventType {
-
+	switch logStruct.EventType {
 	case event.OrdersCanceledEvent:
 		var ordersCanceled event.OrderCanceled
-		err := unmarshalLogStruct(data, &logStruct)
-		ordersCanceled = logStruct.Event.(event.OrderCanceled)
+		err = json.Unmarshal(eventBytes, &ordersCanceled)
 		return &ordersCanceled, err
 
 	case event.OrdersPlacedEvent:
 		var ordersPlaced event.OrderPlaced
-		err := unmarshalLogStruct(data, &logStruct)
-		ordersPlaced = logStruct.Event.(event.OrderPlaced)
+		err = json.Unmarshal(eventBytes, &ordersPlaced)
 		return &ordersPlaced, err
 
 	case event.FundsCreditedEvent:
 		var fundsCredited event.FundsCredited
-		err := unmarshalLogStruct(data, &logStruct)
-		fundsCredited = logStruct.Event.(event.FundsCredited)
+		err = json.Unmarshal(eventBytes, &fundsCredited)
 		return &fundsCredited, err
 
 	case event.FundsDebitedEvent:
 		var fundsDebited event.FundsDebited
-		err := unmarshalLogStruct(data, &logStruct)
-		fundsDebited = logStruct.Event.(event.FundsDebited)
+		err = json.Unmarshal(eventBytes, &fundsDebited)
 		return &fundsDebited, err
 
 	case event.TradeExecutedEvent:
 		var tradeExecuted event.TradeExecuted
-		err := unmarshalLogStruct(data, &logStruct)
-		tradeExecuted = logStruct.Event.(event.TradeExecuted)
+		err = json.Unmarshal(eventBytes, &tradeExecuted)
 		return &tradeExecuted, err
 
 	default:
 		return nil, ErrUnknownEvent
-
 	}
 }
 
 func unmarshalLogStruct(data []byte, logStruct *logStruct) error {
 	err := json.Unmarshal(data, logStruct)
-	return err
-}
-
-func unmarshalEvent(data []byte, event event.Event) error {
-	err := json.Unmarshal(data, event)
 	return err
 }
 
