@@ -3,6 +3,11 @@ package handler
 import (
 	"TradingSimulation/backend/internal/event"
 	"TradingSimulation/backend/internal/event/view"
+	"errors"
+)
+
+var (
+	ErrInsufficientFunds = errors.New("insufficient funds")
 )
 
 type fundsHandler struct {
@@ -44,10 +49,30 @@ func (handler *fundsHandler) Run() error {
 
 		case event.FundsDebitedEvent:
 			fundsDebited := currEvent.(*event.FundsDebited)
+			var fundsOrder event.Order
+
+			if fundsDebited.AccountID == fundsDebited.Trade.AccountIDs[0] {
+				fundsOrder = fundsDebited.Trade.Orders[0]
+			} else {
+				fundsOrder = fundsDebited.Trade.Orders[1]
+			}
 
 			events, err := handler.handleFundsDebited(currEvent)
 			if err != nil {
-				return err
+				switch {
+				case errors.Is(err, ErrInsufficientFunds):
+					// cancel order
+					canceledOrder := event.OrderCanceled{
+						AccountID: fundsOrder.AccountID,
+						Reason:    "Insufficient Funds",
+						Order:     fundsOrder,
+					}
+
+					handler.MainChannel <- &canceledOrder
+
+				default:
+					return err
+				}
 			}
 			if events == nil {
 				// do nothing
@@ -90,6 +115,13 @@ func (handler *fundsHandler) handleFundsCredited(currEvent event.Event) ([]event
 
 func (handler *fundsHandler) handleFundsDebited(currEvent event.Event) ([]event.Event, error) {
 	fundsDebited := currEvent.(*event.FundsDebited)
+
+	accountID := fundsDebited.AccountID
+	accountFunds := handler.MaterializedView.Accounts[accountID].Funds
+
+	if accountFunds < fundsDebited.Sum {
+		return nil, ErrInsufficientFunds
+	}
 
 	fundsCredited, exists := handler.ActiveTrades[fundsDebited.Trade.ID]
 	if exists {

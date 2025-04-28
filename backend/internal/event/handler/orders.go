@@ -17,6 +17,7 @@ type ordersHandler struct {
 
 func (handler *ordersHandler) Run() error {
 	handler.matchingChannel = make(chan event.Order, 100)
+	handler.cancelOrdersChannel = make(chan event.Order, 100)
 
 	matchingService := matching.New(
 		handler.MainChannel,
