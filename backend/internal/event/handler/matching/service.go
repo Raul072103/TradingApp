@@ -101,7 +101,7 @@ func (service *Service) Run() error {
 					}
 
 					tradeExecuted := event.TradeExecuted{
-						AccountID: []int64{order.AccountID, sellOrder.AccountID},
+						AccountID: []int64{buyOrder.AccountID, order.AccountID},
 						Trade: event.Trade{
 							ID:         service.TradesExecutedCounter,
 							AccountIDs: []int64{buyOrder.AccountID, order.AccountID},

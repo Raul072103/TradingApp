@@ -32,7 +32,7 @@ type AccountState struct {
 
 type MaterializedView struct {
 	Accounts map[int64]AccountState // Accounts map of all the accounts accessible by each AccountID
-	Trades   []event.Trade          `json:"trades"` // Trades represent a slice with all the executed trades
+	Trades   []event.TradeExecuted  `json:"trades"` // Trades represent a slice with all the executed trades
 	Orders   []event.Order          `json:"orders"` // Orders represent a slice with all the orders placed
 	Stocks   map[int64]Stock        `json:"stocks"` // Stocks represents the current stocks traded by this app
 }
@@ -41,7 +41,7 @@ type MaterializedView struct {
 func New(events []event.Event) (MaterializedView, error) {
 	var materializedView MaterializedView
 	materializedView.Accounts = make(map[int64]AccountState)
-	materializedView.Trades = make([]event.Trade, 0)
+	materializedView.Trades = make([]event.TradeExecuted, 0)
 	materializedView.Orders = make([]event.Order, 0)
 	materializedView.Stocks = map[int64]Stock{
 		0: {
@@ -202,7 +202,7 @@ func (view *MaterializedView) handleEvent(currEvent event.Event) error {
 		view.Accounts[accountID1] = accountState1
 		view.Accounts[accountID2] = accountState2
 
-		view.Trades = append(view.Trades, tradeExecuted.Trade)
+		view.Trades = append(view.Trades, *tradeExecuted)
 
 	default:
 		return ErrUnknownEventView

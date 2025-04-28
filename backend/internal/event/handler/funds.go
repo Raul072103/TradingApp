@@ -56,7 +56,8 @@ func (handler *fundsHandler) Run() error {
 				underlyingTrade.Status = event.SuccessfulTrade
 
 				executedTradeEvent := event.TradeExecuted{
-					Trade: underlyingTrade,
+					Trade:     underlyingTrade,
+					AccountID: []int64{underlyingTrade.AccountIDs[0], underlyingTrade.AccountIDs[1]},
 				}
 
 				handler.ProcessedEventsChannel <- &executedTradeEvent

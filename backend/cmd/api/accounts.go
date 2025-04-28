@@ -31,13 +31,19 @@ func (app *application) accountOrdersHandler(w http.ResponseWriter, r *http.Requ
 	}
 }
 
-func (app *application) allAccountsHandler(w http.ResponseWriter, r *http.Request) {
-	err := writeJSON(w, http.StatusOK, app.materializedView.Accounts)
+func (app *application) accountsFundsHandler(w http.ResponseWriter, r *http.Request) {
+	accountFunds := make(map[int64]float64)
+
+	for accountID, accountState := range app.materializedView.Accounts {
+		accountFunds[accountID] = accountState.Funds
+	}
+
+	err := writeJSON(w, http.StatusOK, accountFunds)
 	if err != nil {
 		if err := writeJSONError(w, http.StatusInternalServerError, err.Error()); err != nil {
 			app.logger.Error("error writing error response", zap.Error(err))
 		}
-		app.logger.Error("error getting all accounts", zap.Error(err))
+		app.logger.Error("error getting account funds", zap.Error(err))
 	}
 }
 

@@ -73,7 +73,7 @@ func (app *application) mount() *chi.Mux {
 
 		r.Get("/executed_trades", app.executedTradesHandler)
 
-		r.Get("/accounts", app.allAccountsHandler)
+		r.Get("/accounts", app.accountsFundsHandler)
 		r.Get("/accounts/orders", app.accountOrdersHandler)
 		r.Get("/accounts/{id}/orders", app.accountOrdersByIDHandler)
 

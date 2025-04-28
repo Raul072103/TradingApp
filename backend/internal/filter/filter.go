@@ -4,6 +4,7 @@ import (
 	"TradingSimulation/backend/internal/event"
 	"TradingSimulation/backend/internal/event/store"
 	"TradingSimulation/backend/internal/event/view"
+	"time"
 )
 
 type Filter struct {
@@ -34,6 +35,8 @@ func (filter *Filter) Run() error {
 		case event.OrdersCanceledEvent:
 			orderCanceled := currEvent.(*event.OrderCanceled)
 			filter.canceledOrders[orderCanceled.Order.ID] = struct{}{}
+			orderCanceled.Timestamp = time.Now()
+			filteredEvent = orderCanceled
 
 		case event.OrdersPlacedEvent:
 			orderPlaced := currEvent.(*event.OrderPlaced)
@@ -42,6 +45,8 @@ func (filter *Filter) Run() error {
 				// skip this event
 				continue
 			}
+			orderPlaced.Timestamp = time.Now()
+			filteredEvent = orderPlaced
 
 		case event.FundsCreditedEvent:
 			fundsCredited := currEvent.(*event.FundsCredited)
@@ -53,6 +58,8 @@ func (filter *Filter) Run() error {
 				// skip this event
 				continue
 			}
+			fundsCredited.Timestamp = time.Now()
+			filteredEvent = fundsCredited
 
 		case event.FundsDebitedEvent:
 			fundsDebited := currEvent.(*event.FundsDebited)
@@ -64,6 +71,8 @@ func (filter *Filter) Run() error {
 				// skip this event
 				continue
 			}
+			fundsDebited.Timestamp = time.Now()
+			filteredEvent = fundsDebited
 
 		case event.TradeExecutedEvent:
 			tradeExecuted := currEvent.(*event.TradeExecuted)
@@ -75,6 +84,8 @@ func (filter *Filter) Run() error {
 				// skip this event
 				continue
 			}
+			tradeExecuted.Timestamp = time.Now()
+			filteredEvent = tradeExecuted
 
 		}
 
