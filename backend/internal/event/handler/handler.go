@@ -146,5 +146,5 @@ func (handler *Handler) HandleEvent(currEvent event.Event) error {
 
 	handler.eventsCounter += 1
 
-	return ErrHandlerCaseLogic
+	return nil
 }
