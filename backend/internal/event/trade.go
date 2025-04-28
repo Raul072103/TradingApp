@@ -17,6 +17,7 @@ type Trade struct {
 
 type TradeExecuted struct {
 	EventID   int64     `json:"event_id"`
+	AccountID []int64   `json:"account_id"`
 	Timestamp time.Time `json:"timestamp"`
 	Trade     Trade     `json:"trade"`
 }
