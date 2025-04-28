@@ -19,6 +19,7 @@ type Handler struct {
 	MaterializedView *view.MaterializedView
 	EventStore       *store.Store
 	Channel          Channel
+	Stocks           map[int64]view.Stock
 	eventsCounter    int64
 	funds            fundsHandler
 	orders           ordersHandler
@@ -30,7 +31,12 @@ var (
 	ErrHandlerCaseLogic = errors.New("error after handling the event type")
 )
 
-func New(mainChannel chan event.Event, processedEventsChannel chan event.Event, view *view.MaterializedView) Handler {
+func New(
+	mainChannel chan event.Event,
+	processedEventsChannel chan event.Event,
+	view *view.MaterializedView,
+	stocks map[int64]view.Stock) Handler {
+
 	var handler Handler
 	handler.MaterializedView = view
 
@@ -39,6 +45,7 @@ func New(mainChannel chan event.Event, processedEventsChannel chan event.Event, 
 	handler.Channel.Funds = make(chan event.Event, 100)
 	handler.Channel.Trades = make(chan event.Event, 100)
 	handler.Channel.Orders = make(chan event.Event, 100)
+	handler.Stocks = stocks
 	handler.eventsCounter = 0
 
 	fundsHandler := fundsHandler{
@@ -60,6 +67,7 @@ func New(mainChannel chan event.Event, processedEventsChannel chan event.Event, 
 		MainChannel:            handler.Channel.Main,
 		ProcessedEventsChannel: handler.Channel.ProcessedEvents,
 		OrdersChannel:          handler.Channel.Orders,
+		Stocks:                 handler.Stocks,
 	}
 
 	handler.funds = fundsHandler

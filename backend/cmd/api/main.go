@@ -42,7 +42,7 @@ func main() {
 		zapLogger.Fatal("server error", zap.Error(err))
 	}
 
-	mainHandler := handler.New(mainChannel, processedEvents, &materializedView)
+	mainHandler := handler.New(mainChannel, processedEvents, &materializedView, materializedView.Stocks)
 
 	processedEventsFilter := filter.New(eventStore, &materializedView, processedEvents)
 

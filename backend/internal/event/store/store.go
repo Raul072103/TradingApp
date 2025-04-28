@@ -45,7 +45,7 @@ func (s *Store) AppendEvent(event event.Event) error {
 		return err
 	}
 
-	_, err = s.file.WriteString(eventStr)
+	_, err = s.file.WriteString(eventStr + "\n")
 	if err != nil {
 		return err
 	}

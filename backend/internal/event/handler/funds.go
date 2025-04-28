@@ -37,7 +37,7 @@ func (handler *fundsHandler) Run() error {
 					Trade: underlyingTrade,
 				}
 
-				handler.ProcessedEventsChannel <- &executedTradeEvent
+				handler.MainChannel <- &executedTradeEvent
 				handler.ProcessedEventsChannel <- events[0]
 				handler.ProcessedEventsChannel <- events[1]
 			}
