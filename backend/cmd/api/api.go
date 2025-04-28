@@ -5,6 +5,7 @@ import (
 	"TradingSimulation/backend/internal/event/handler"
 	"TradingSimulation/backend/internal/event/store"
 	"TradingSimulation/backend/internal/event/view"
+	"TradingSimulation/backend/internal/filter"
 	"context"
 	"errors"
 	"github.com/go-chi/chi/v5"
@@ -21,13 +22,14 @@ import (
 // TODO() don't forget about filter!
 
 type application struct {
-	config           config
-	logger           *zap.Logger
-	eventStore       *store.Store
-	materializedView *view.MaterializedView
-	mainHandler      *handler.Handler
-	mainChannel      chan event.Event
-	processedEvents  chan event.Event
+	config                config
+	logger                *zap.Logger
+	eventStore            *store.Store
+	materializedView      *view.MaterializedView
+	mainHandler           *handler.Handler
+	processedEventsFilter *filter.Filter
+	mainChannel           chan event.Event
+	processedEvents       chan event.Event
 }
 
 type config struct {
@@ -108,7 +110,14 @@ func (app *application) run(mux *chi.Mux) error {
 
 		shutdown <- srv.Shutdown(ctx)
 	}()
-	
+
+	go func() {
+		err := app.processedEventsFilter.Run()
+		if err != nil {
+			shutdown <- err
+		}
+	}()
+
 	go func() {
 		err := app.mainHandler.Run()
 		if err != nil {

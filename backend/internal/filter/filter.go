@@ -7,13 +7,13 @@ import (
 )
 
 type Filter struct {
-	EventStore      store.Store
-	View            view.MaterializedView
+	EventStore      *store.Store
+	View            *view.MaterializedView
 	processedEvents chan event.Event
 	canceledOrders  map[int64]struct{}
 }
 
-func New(eventStore store.Store, view view.MaterializedView, processedEvents chan event.Event) *Filter {
+func New(eventStore *store.Store, view *view.MaterializedView, processedEvents chan event.Event) *Filter {
 	return &Filter{
 		EventStore:      eventStore,
 		View:            view,

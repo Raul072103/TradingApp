@@ -5,6 +5,7 @@ import (
 	"TradingSimulation/backend/internal/event/handler"
 	"TradingSimulation/backend/internal/event/store"
 	"TradingSimulation/backend/internal/event/view"
+	"TradingSimulation/backend/internal/filter"
 	"TradingSimulation/common/logger"
 	"expvar"
 	"go.uber.org/zap"
@@ -43,14 +44,17 @@ func main() {
 
 	mainHandler := handler.New(mainChannel, processedEvents, &materializedView)
 
+	processedEventsFilter := filter.New(eventStore, &materializedView, processedEvents)
+
 	app := &application{
-		logger:           zapLogger,
-		config:           cfg,
-		mainHandler:      &mainHandler,
-		materializedView: &materializedView,
-		eventStore:       eventStore,
-		mainChannel:      mainChannel,
-		processedEvents:  processedEvents,
+		logger:                zapLogger,
+		config:                cfg,
+		mainHandler:           &mainHandler,
+		materializedView:      &materializedView,
+		eventStore:            eventStore,
+		processedEventsFilter: processedEventsFilter,
+		mainChannel:           mainChannel,
+		processedEvents:       processedEvents,
 	}
 
 	// Metrics collected
