@@ -72,8 +72,8 @@ func (app *application) mount() *chi.Mux {
 		r.Get("/executed_trades", app.executedTradesHandler)
 
 		r.Get("/accounts", app.allAccountsHandler)
-		r.Get("/accounts/trades", app.accountTradesHandler)
 		r.Get("/accounts/orders", app.accountOrdersHandler)
+		r.Get("/accounts/{id}/orders", app.accountOrdersByIDHandler)
 
 		r.Post("/orders", app.addOrderHandler)
 
@@ -107,6 +107,13 @@ func (app *application) run(mux *chi.Mux) error {
 		defer cancel()
 
 		shutdown <- srv.Shutdown(ctx)
+	}()
+	
+	go func() {
+		err := app.mainHandler.Run()
+		if err != nil {
+			shutdown <- err
+		}
 	}()
 
 	app.logger.Info("Server has started", zap.String("addr", app.config.addr), zap.String("env", app.config.env))
