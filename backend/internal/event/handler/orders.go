@@ -16,6 +16,8 @@ type ordersHandler struct {
 }
 
 func (handler *ordersHandler) Run() error {
+	handler.matchingChannel = make(chan event.Order, 100)
+
 	matchingService := matching.New(
 		handler.MainChannel,
 		handler.matchingChannel,
