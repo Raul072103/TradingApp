@@ -13,15 +13,28 @@ func (app *application) accountOrdersHandler(w http.ResponseWriter, r *http.Requ
 		BuyOrders        []event.Order `json:"buy_orders"`
 		SellOrders       []event.Order `json:"sell_orders"`
 		SuccessfulOrders []event.Order `json:"successful_orders"`
+		CanceledOrders   []event.Order `json:"canceled_orders"`
 	})
 
 	for key := range app.materializedView.Accounts {
 		account := app.materializedView.Accounts[key]
+
+		var canceledOrders = make([]event.Order, 0)
+
+		for key := range account.CanceledOrders {
+			canceledOrders = append(canceledOrders, account.CanceledOrders[key])
+		}
+
 		accountOrders[key] = struct {
 			BuyOrders        []event.Order `json:"buy_orders"`
 			SellOrders       []event.Order `json:"sell_orders"`
 			SuccessfulOrders []event.Order `json:"successful_orders"`
-		}{BuyOrders: account.BuyOrders, SellOrders: account.SellOrders, SuccessfulOrders: account.SuccessfulOrders}
+			CanceledOrders   []event.Order `json:"canceled_orders"`
+		}{
+			BuyOrders:        account.BuyOrders,
+			SellOrders:       account.SellOrders,
+			SuccessfulOrders: account.SuccessfulOrders,
+			CanceledOrders:   canceledOrders}
 	}
 
 	err := writeJSON(w, http.StatusOK, accountOrders)

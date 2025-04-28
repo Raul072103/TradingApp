@@ -118,12 +118,24 @@ func (view *MaterializedView) handleEvent(currEvent event.Event) error {
 			return ErrCannotCancelAnUnplacedOrder
 		}
 
-		accountState.CanceledOrders[orderCanceled.Order.ID] = orderCanceled.Order
+		order := orderCanceled.Order
+
+		// Remove the order from BuyOrders or SellOrders
+		switch order.Type {
+		case event.BuyOrder:
+			accountState.BuyOrders = removeOrderByID(accountState.BuyOrders, order.ID)
+		case event.SellOrder:
+			accountState.SellOrders = removeOrderByID(accountState.SellOrders, order.ID)
+		default:
+			return ErrUnknownOrderType
+		}
+
+		// Save the canceled order in CanceledOrders
+		accountState.CanceledOrders[order.ID] = order
+
+		// Add the event to account events
 		accountState.Events = append(accountState.Events, orderCanceled)
 
-		// TODO() delete events related to the order canceled
-
-		view.Orders = append(view.Orders, orderCanceled.Order)
 		view.Accounts[accountID] = accountState
 
 	case event.OrdersPlacedEvent:
